@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context antiJARLocking="true" path="/MyApp">
+    <!-- Database -->
+    <Resource name="jdbc/MyAppDB" auth="Container"
+              type="javax.sql.DataSource" username="ruppa" password="ruppa"
+              driverClassName="oracle.jdbc.driver.OracleDriver" 
+              url="jdbc:oracle:thin:@ensioracle1.imag.fr:1521:ensioracle1"
+              maxActive="100" 
+    />
+</Context>
