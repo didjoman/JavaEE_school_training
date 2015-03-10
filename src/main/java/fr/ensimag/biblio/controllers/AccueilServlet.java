@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Alexandre Rupp
  */
-
+@WebServlet(name = "Accueil", urlPatterns = {"/accueil"})
 public class AccueilServlet extends HttpServlet {
     // Warning, the name will be the same for ALL users !
     private String order = "Choisir un nom : ";

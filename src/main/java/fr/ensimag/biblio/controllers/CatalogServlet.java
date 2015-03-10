@@ -5,18 +5,13 @@
 */
 package fr.ensimag.biblio.controllers;
 
-import com.mongodb.MongoClient;
-import fr.ensimag.biblio.dao.OracleDB;
-import fr.ensimag.biblio.dao.impl.MongoDBUserDAO;
-import fr.ensimag.biblio.models.User;
+import fr.ensimag.biblio.dao.DAOFactory;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Alexandre Rupp
  */
+@WebServlet(name = "CatalogServlet", urlPatterns = {"/catalog"})
 public class CatalogServlet extends HttpServlet {
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -48,7 +45,8 @@ public class CatalogServlet extends HttpServlet {
             throws ServletException, IOException {
         
         // Select in database (Oracle) :
-        Connection connec = new OracleDB().connect();
+        Connection connec = ((DAOFactory)request.getServletContext()
+                .getAttribute("SQLPLUS_CLIENT")).getConnection();
         PreparedStatement selectBiblio = null;
         String selectBiblioQuery = "SELECT auteur, titre FROM bibliographie";
         ResultSet res = null;
@@ -76,9 +74,12 @@ public class CatalogServlet extends HttpServlet {
             Logger.getLogger(AddUserServlet.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
+                if(res != null)
+                    res.close();
                 if(selectBiblio != null)
                     selectBiblio.close();
-                connec.close();
+                if(connec != null)
+                    connec.close();
             } catch (SQLException ex) {
                 Logger.getLogger(CatalogServlet.class.getName()).log(Level.SEVERE, null, ex);
             }

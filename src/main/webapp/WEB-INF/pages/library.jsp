@@ -3,11 +3,11 @@
     Created on : 7 févr. 2015, 11:09:04
     Author     : Alexandre Rupp
 --%>
-    
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-    
+
 <jsp:include page="header.jsp" />    
 <header>
     
@@ -18,17 +18,17 @@
         <ul id="nav-bar">
             <li><a href="accueil">Index</a> | </li>
             <li><a href="register">S'enregistrer</a> | </li>
-            <c:choose>
-                <c:when test="${sessionScope.login ne null}">
-                <li><a href="logout">Logout</a> | </li>
-                </c:when>
-                <c:otherwise>
-                <li><a href="check_user">Login</a> | </li>
-                </c:otherwise>
-            </c:choose>
+                <c:choose>
+                    <c:when test="${sessionScope.login ne null}">
+                    <li><a href="logout">Logout</a> | </li>
+                    </c:when>
+                    <c:otherwise>
+                    <li><a href="check_user">Login</a> | </li>
+                    </c:otherwise>
+                </c:choose>
             <li><a href="users">Liste des utilisateurs</a> | </li>
             <li><a href="statistics">Statistiques</a> | </li>
-             <li><a href="bilan">Bilan</a> | </li>
+            <li><a href="bilan">Bilan</a> | </li>
             <li><a href="http://ensimag.grenoble-inp.fr/">Ensimag</a></li>
         </ul>
     </nav>
@@ -47,6 +47,25 @@
         <li><em>CSS2 - Pratique du design web</em>, Raphaël Goetter</li>
         <li><em>The C++ Programming Language</em>, Bjame Stroustrup</li>
     </ul>
+    <a href="books?action=get&view=create">Ajouter une référence</a>    
+    <c:if test="${books ne null}">
+        <table>
+            <tr>
+                <th>Auteur</th>
+                <th>Titre</th>
+                <th>&nbsp;</th>
+            </tr>
+            <c:forEach items="${books}" var="book">
+                <tr>
+                    <td>${book.author}</td>
+                    <td>${book.title}</td>
+                    <td><a href="books?action=get&view=update&id=${book.id}">modifier</a>
+                    </td>
+                    <td><a href="books?action=get&view=delete&id=${book.id}">supprimer</a></td>
+                </tr>
+            </c:forEach>
+        </table>
+    </c:if>
         
     <h2 id="schedule">Horaires d'ouverture</h2>
     <ul> 
@@ -73,5 +92,5 @@
     Retour en haut de page 
     <a href="#" title="Back to the top of the page">ici</a>.
 </footer>
-    
+
 <jsp:include page="footer.jsp" />

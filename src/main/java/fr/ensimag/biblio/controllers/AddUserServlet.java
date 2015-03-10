@@ -5,13 +5,11 @@
 */
 package fr.ensimag.biblio.controllers;
 
-import com.mongodb.DB;
 import com.mongodb.MongoClient;
-import fr.ensimag.biblio.dao.OracleDB;
+import fr.ensimag.biblio.dao.DAOFactory;
 import fr.ensimag.biblio.dao.impl.MongoDBUserDAO;
 import fr.ensimag.biblio.models.User;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -22,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Alexandre Rupp
  */
+@WebServlet(name = "AddUserServlet", urlPatterns = {"/register"})
 public class AddUserServlet extends HttpServlet {
     
     
@@ -122,7 +122,9 @@ public class AddUserServlet extends HttpServlet {
         
         // ************************* /!\ USELESS THING *************************
         // We store it in the 2nd database (Oracle) :
-        Connection connec = new OracleDB().connect();
+        // TODO : BAD PRACTICE : Define a UserDAO
+        Connection connec = ((DAOFactory)request.getServletContext()
+                .getAttribute("SQLPLUS_CLIENT")).getConnection();
         PreparedStatement insertUser = null;
         String insertUserQuery = "INSERT INTO Users (login, password) VALUES (?,?)";
         try {
@@ -134,6 +136,15 @@ public class AddUserServlet extends HttpServlet {
             connec.close();
         } catch (SQLException ex) {
             Logger.getLogger(AddUserServlet.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if(insertUser != null)
+                    insertUser.close();
+                if(connec != null)
+                    connec.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(CheckUserServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         
         

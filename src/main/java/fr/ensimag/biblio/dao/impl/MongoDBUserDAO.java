@@ -13,7 +13,6 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import fr.ensimag.biblio.converter.UserConverter;
-import fr.ensimag.biblio.dao.OracleDB;
 import fr.ensimag.biblio.models.User;
 import java.util.ArrayList;
 import java.util.HashMap;

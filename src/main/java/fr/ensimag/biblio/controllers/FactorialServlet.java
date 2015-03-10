@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Alexandre Rupp
  */
-
+@WebServlet(name = "FactorialServlet", urlPatterns = {"/factorial"})
 public class FactorialServlet extends HttpServlet {
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

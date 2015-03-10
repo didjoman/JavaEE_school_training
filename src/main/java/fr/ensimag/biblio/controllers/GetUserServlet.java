@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Alexandre Rupp
  */
+@WebServlet(name = "GetUserServlet", urlPatterns = {"/users"})
 public class GetUserServlet extends HttpServlet {
     
     
@@ -60,7 +62,7 @@ public class GetUserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-     
+        
     }
     
     

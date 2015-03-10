@@ -6,7 +6,7 @@
 package fr.ensimag.biblio.controllers;
 
 import com.mongodb.MongoClient;
-import fr.ensimag.biblio.dao.OracleDB;
+import fr.ensimag.biblio.dao.DAOFactory;
 import fr.ensimag.biblio.dao.impl.MongoDBUserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author Alexandre Rupp
  */
+@WebServlet(name = "CheckUserServlet", urlPatterns = {"/check_user"})
 public class CheckUserServlet extends HttpServlet {
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -104,14 +106,16 @@ public class CheckUserServlet extends HttpServlet {
         
         // ************************* /!\ USELESS THING *************************
         // We store it in the 2nd database (Oracle) :
-        Connection connec = new OracleDB().connect();
+        Connection connec = ((DAOFactory)request.getServletContext()
+                .getAttribute("SQLPLUS_CLIENT")).getConnection();
         PreparedStatement checkUser = null;
+        ResultSet res = null;
         String checkUserQuery = "SELECT login FROM Users WHERE login = ? AND password = ?";
         try {
             checkUser = connec.prepareStatement(checkUserQuery);
             checkUser.setString(1, login);
             checkUser.setString(2, password);
-            ResultSet res = checkUser.executeQuery();
+            res = checkUser.executeQuery();
             if(!res.next()){
                 error = "Erreur : Login ou mot de passe incorrecte !";
                 logged = false;
@@ -120,9 +124,12 @@ public class CheckUserServlet extends HttpServlet {
             Logger.getLogger(AddUserServlet.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
+                if(res != null)
+                    res.close();
                 if(checkUser != null)
                     checkUser.close();
-                connec.close();
+                if(connec != null)
+                    connec.close();
             } catch (SQLException ex) {
                 Logger.getLogger(CheckUserServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
